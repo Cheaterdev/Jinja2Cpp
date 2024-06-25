@@ -404,6 +404,7 @@ public:
         ToFloatMode,
         ToIntMode,
         ToListMode,
+        ToStringMode,
         AbsMode,
         RoundMode,
     };

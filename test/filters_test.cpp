@@ -429,7 +429,8 @@ INSTANTIATE_TEST_SUITE_P(Convert, FilterGenericTest, ::testing::Values(
                             InputOutputPair{"'100' | int(10, base=8) | pprint", "64"},
                             InputOutputPair{"'100' | int(10, base=16) | pprint", "256"},
                             InputOutputPair{"'100' | list | pprint", "['1', '0', '0']"},
-                            InputOutputPair{"{'name'='itemName', 'val'='itemValue'} | list | sort | pprint", "['name', 'val']"}
+                            InputOutputPair{"{'name'='itemName', 'val'='itemValue'} | list | sort | pprint", "['name', 'val']"},
+                            InputOutputPair{"10 | string | list | pprint", "['1', '0']"}
                             ));
 
 INSTANTIATE_TEST_SUITE_P(Trim, FilterGenericTest, ::testing::Values(

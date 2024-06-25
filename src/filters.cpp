@@ -65,6 +65,7 @@ std::unordered_map<std::string, ExpressionFilter::FilterFactoryFn> s_filters = {
     { "reverse", FilterFactory<filters::SequenceAccessor>::MakeCreator(filters::SequenceAccessor::ReverseMode) },
     { "select", FilterFactory<filters::Tester>::MakeCreator(filters::Tester::SelectMode) },
     { "selectattr", FilterFactory<filters::Tester>::MakeCreator(filters::Tester::SelectAttrMode) },
+    { "string", FilterFactory<filters::ValueConverter>::MakeCreator(filters::ValueConverter::ToStringMode) },
     { "slice", FilterFactory<filters::Slice>::MakeCreator(filters::Slice::SliceMode) },
     { "sort", &FilterFactory<filters::Sort>::Create },
     { "striptags", FilterFactory<filters::StringConverter>::MakeCreator(filters::StringConverter::StriptagsMode) },
@@ -820,7 +821,10 @@ ValueConverter::ValueConverter(FilterParams params, ValueConverter::Mode mode)
             break;
         case ToIntMode:
             ParseParams({ { "default"s, false }, { "base"s, false, static_cast<int64_t>(10) } }, params);
-            break;
+            break; 
+        case ToStringMode:
+            ParseParams({ { "default"s, false } }, params);
+        break;
         case ToListMode:
         case AbsMode:
             break;
@@ -859,6 +863,9 @@ struct ValueConverterImpl : visitors::BaseVisitor<>
             case ValueConverter::AbsMode:
                 result = InternalValue(static_cast<int64_t>(std::abs(val)));
                 break;
+            case ValueConverter::ToStringMode:
+                result = std::to_string(val);
+                break;
             case ValueConverter::ToIntMode:
             case ValueConverter::RoundMode:
                 result = InternalValue(static_cast<int64_t>(val));
@@ -880,6 +887,9 @@ struct ValueConverterImpl : visitors::BaseVisitor<>
                 break;
             case ValueConverter::ToIntMode:
                 result = static_cast<int64_t>(val);
+                break;
+            case ValueConverter::ToStringMode:
+                result = std::to_string(val);
                 break;
             case ValueConverter::AbsMode:
                 result = InternalValue(fabs(val));
@@ -967,6 +977,9 @@ struct ValueConverterImpl : visitors::BaseVisitor<>
                     result = static_cast<int64_t>(intVal);
                 break;
             }
+            case ValueConverter::ToStringMode:
+                result = InternalValue(val);
+                break;
             case ValueConverter::ToListMode:
                 result = ListAdapter::CreateAdapter(val.size(), [str = val](size_t idx) { return InternalValue(TargetString(str.substr(idx, 1))); });
             default:
@@ -1007,6 +1020,9 @@ struct ValueConverterImpl : visitors::BaseVisitor<>
                     result = static_cast<int64_t>(intVal);
                 break;
             }
+            case ValueConverter::ToStringMode:
+                result = InternalValue(val);
+                break;
             case ValueConverter::ToListMode:
                 result = ListAdapter::CreateAdapter(val.size(), [str = val](size_t idx) { return InternalValue(str.substr(idx, 1)); });
             default:
