@@ -240,7 +240,9 @@ struct FormatArgumentConverter : visitors::BaseVisitor<FormatArgument>
         {
             m_store.push_back(fmt::arg(m_name.c_str(), t));
         }
-        return fmt::detail::make_arg<FormatContext>(t);
+
+        T t2 = t;
+        return fmt::detail::make_arg<FormatContext>(t2);
     }
 
     const RenderContext* m_context;
