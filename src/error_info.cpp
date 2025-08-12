@@ -257,7 +257,7 @@ void RenderErrorInfo(std::basic_string<CharT>& result, const ErrorInfoTpl<CharT>
         break;
     }
     format_to(std::back_inserter(out), UNIVERSAL_STR("\n{}").GetValue<CharT>(), errInfo.GetLocationDescr());
-    result = to_string(out);
+    result = out.to_string();
 }
 
 template<>
